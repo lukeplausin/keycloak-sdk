@@ -1,0 +1,257 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import requests
+import logging
+import json
+import os
+import time
+
+
+logger = logging.getLogger(__name__)
+
+
+def offset_to_unix(seconds):
+    return int(1000 * (seconds + time.time()))
+
+
+def reformat_token(response, client_id):
+    token = response["Response"]
+    token.update({
+        "clientId": client_id,
+        "token": token["access_token"],
+        "expiresAt": offset_to_unix(token["expires_in"]),
+        "refreshToken": token["refresh_token"],
+        "refreshExpiresAt": offset_to_unix(token["refresh_expires_in"])
+    })
+    # token.update({
+    #     "cookies": response["Cookies"]
+    # })
+    return token
+
+
+class KeycloakApiSession(object):
+    def __init__(self):
+        self.config_file_location = os.path.join(
+            os.environ["HOME"], ".keycloak", "kcadm.config")
+        self.realm = 'master'
+        self.request_timeout_sec = 2
+        self.endpoints = {}
+        self.login_endpoint = "/protocol/openid-connect/token"
+        self.jar = requests.cookies.RequestsCookieJar()
+
+    def login(self, serverUrl, username, password):
+        # Try to open config file...
+        logger.info("Base URL: {}".format(serverUrl))
+        self.serverUrl = serverUrl
+        if os.path.exists(self.config_file_location):
+            self.open_config_file(self.config_file_location)
+            if not self.check_token(self.get_current_token()):
+                self.login_to_server(serverUrl, username, password)
+                self.write_config_file(self.config_file_location)
+        else:
+            # No existing config, get a fresh token
+            self.login_to_server(serverUrl, username, password)
+            self.write_config_file(self.config_file_location)
+
+    def open_config_file(self, file_location):
+        with open(file_location, "r") as f:
+            data = json.load(f)
+            self.realm = data["realm"]
+            self.serverUrl = data["serverUrl"]
+            self.endpoints = data["endpoints"]
+        # for domain, realmdata in self.endpoints.items():
+        #     for realm, data in realmdata.items():
+        #         if "cookies" in data.keys():
+        #             cookies = data["cookies"]
+        #             for k, v in cookies.items():
+        #                 print("Setting cookie {}: {} (domain={})".format(
+        #                     k, v, domain))
+        #                 self.jar.set(k, v, domain=domain, path="/")
+
+    def write_config_file(self, file_location):
+        with open(file_location, "w") as f:
+            data = {
+                "realm": self.realm,
+                "serverUrl": self.serverUrl,
+                "endpoints": self.endpoints
+            }
+            f.write(json.dumps(data))
+
+    def login_to_server(self, serverUrl, username, password):
+        client_id = "admin-cli"
+        response = self.request(
+            method="POST",
+            endpoint=self._rurl(self.login_endpoint),
+            data={
+                "client_id": client_id,
+                "grant_type": "password",
+                "username": username,
+                "password": password
+            },
+            auth=None
+        )
+        if response:
+            print("Logged into admin CLI")
+            token = reformat_token(response, client_id)
+            self.endpoints[serverUrl] = {self.realm: token}
+
+    def check_token(self, token):
+        at_time = ((token["expiresAt"] / 1000) - time.time())
+        rt_time = ((token["refreshExpiresAt"] / 1000) - time.time())
+        if (at_time < 0):
+            print("Access token has expired {0:.2f}s ago".format(at_time))
+            if (rt_time < 0):
+                print("Refresh token expired {0:.2f}s ago".format(rt_time))
+                return False
+            else:
+                print("Refresh token is valid ({0:.2f}s left)".format(rt_time))
+                return self.refresh_token(token)
+        else:
+            print("Access token is still valid ({0:.2f}s left)".format(at_time))
+            return token
+
+    def refresh_token(self, token):
+        client_id = "admin-cli"
+        response = self.request(
+            method="POST",
+            endpoint=self._rurl(self.login_endpoint),
+            data={
+                "client_id": client_id,
+                "client_secret": token["session_state"],
+                "grant_type": "refresh_token",
+                "refresh_token": token["refreshToken"]
+            },
+            auth=None
+        )
+        if response:
+            print("Refreshed Token")
+            token = reformat_token(response, client_id)
+            self.endpoints[self.serverUrl] = {self.realm: token}
+            if self.config_file_location:
+                self.write_config_file(self.config_file_location)
+            return token
+        else:
+            return False
+
+    def get_current_token(self):
+        return self.endpoints[self.serverUrl][self.realm]
+
+    def _rurl(self, endpoint, realm_name=None):
+        # Helper function for nice URLs
+        if not realm_name:
+            realm_name = self.realm
+        return "{base}/realms/{realm}{endpoint}".format(**{
+            "base": self.serverUrl,
+            "realm": realm_name,
+            "endpoint": endpoint
+        })
+
+    def _admurl(self, endpoint):
+        # Helper function for nice URLs
+        return "{base}/admin/realms{endpoint}".format(**{
+            "base": self.serverUrl,
+            "endpoint": endpoint
+        })
+
+    def _url(self, endpoint):
+        # Helper function for nice URLs
+        return "{base}{endpoint}".format(**{
+            "base": self.serverUrl,
+            "endpoint": endpoint
+        })
+
+    def get_auth(self):
+        token = self.check_token(self.get_current_token())
+        if not token:
+            raise RuntimeError("You must log in again")
+        return {"Authorization": "bearer {}".format(token["token"])}
+
+    def request(
+            self, method, endpoint, data=None, headers={}, auth="Bearer",
+            params={}
+            ):
+        if auth == "Bearer":
+            headers.update(self.get_auth())
+        response = requests.request(
+            method=method,
+            url=endpoint,
+            data=data,
+            headers=headers,
+            timeout=self.request_timeout_sec,
+            cookies=self.jar,
+            params=params
+        )
+        print("{method} {endpoint} {status}".format(
+            method=method,
+            endpoint=endpoint,
+            status=response.status_code
+        ))
+        if response:
+            try:
+                msg = response.json()
+            except Exception:
+                msg = response.text
+            rval = {
+                "Status": response.status_code,
+                "Response": msg
+            }
+            if response.cookies:
+                self.jar.update(response.cookies)
+            return rval
+        else:
+            print("Error {code} {message}".format(
+                code=response.status_code,
+                message=response.reason
+            ))
+            response.raise_for_status()
+
+
+class KeycloakApiClient(object):
+    def __init__(self, session):
+        self.session = session
+
+
+###
+#   Start API methods
+#   See here: http://www.keycloak.org/docs-api/2.5/rest-api/index.html#_definitions
+###
+
+{% for client_name, client in clients.items() %}
+class {{ client_name }}(KeycloakApiClient):
+    """
+    {{ client.name }}
+    """
+    def __init__(self, session):
+        self.client_name = "{{ client_name }}"
+        super({{ client_name }}, self).__init__(session)
+
+{% for endpoint in client.endpoints %}
+    def {{ endpoint.name_py }}(self, {% for param in endpoint.parameters | selectattr("Required", "equalto", True) %}{{ param.Name }}{% if not loop.last %}, {% endif %}{% endfor %}{% for param in endpoint.parameters | selectattr("Required", "equalto", False) %}, {{ param.Name }}=None{% endfor %}):
+        """
+        {{ endpoint.name }} ({{ endpoint.subheader }})
+
+        Parameters
+        ----------{% for param in endpoint.parameters %}
+        {{ param.Name }} : {{ param.Schema }}
+            ({% if param.Required %}Required, {% else %}Optional, {% endif %}{{ param.Type }}){% if param.Description %} {{ param.Description }}{% endif %}{% endfor %}
+        """
+
+        path = "{{ endpoint.endpoint_nice }}".format(
+            {% for param in (endpoint.parameters | selectattr("Type", "equalto", "Path")) %}{{ param.Name }}={{ param.Name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        )
+        params = {
+            {% for param in (endpoint.parameters | selectattr("Type", "equalto", "Query")) %}"{{ param.Name }}": {{ param.Name }}{% if not loop.last %}, {% endif %}{% endfor %}
+        }
+        headers = {
+            {% if endpoint.produces is defined %}"Content-Type": "{{ endpoint.produces | first }}"{% endif %}
+        }
+        return self.session.request(
+            method="{{ endpoint.method }}",
+            endpoint=self.session._admurl(path),
+            params=params,{% for param in endpoint.parameters %}{% if param.Type == "Body" %}
+            headers=headers,
+            data={{ param.Name }},{% endif %}{% endfor %}
+        )
+{% endfor %}
+{% endfor %}
