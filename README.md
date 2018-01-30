@@ -13,7 +13,7 @@ pip install https://github.com/lukeplausin/keycloak-sdk.git
 
 ## Usage
 
-### Login
+### Login
 
 Log into a keycloak server (with your username and password stored in the `KC_USERNAME` and `KC_PASSWORD` environment variables):
 
@@ -39,7 +39,7 @@ s.config_file_location = os.path.join(os.environ["HOME"], ".keycloak", "kcadm.co
 
 If you set the `config_file_location` then the `keycloak_sdk` module will store the login token there to save you entering your credentials between runs.
 
-### Client Examples
+### Client Examples
 
 List the security realms on the server:
 
