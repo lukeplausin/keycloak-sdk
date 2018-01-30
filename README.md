@@ -11,7 +11,7 @@ To install with pip:
 pip install https://github.com/lukeplausin/keycloak-sdk.git
 ```
 
-## Usage
+## Usage
 
 Log into a keycloak server (with your username and password stored in the `KC_USERNAME` and `KC_PASSWORD` environment variables):
 
@@ -62,7 +62,24 @@ response = s.request(
 )
 ```
 
-## Documentation
+## Logging
+
+The SDK uses the python `logging` module as standard. To capture the output of the logs, you can redirect the output like this:
+
+```
+import keycloak_sdk
+import logging
+
+logger = logging.getLogger("keycloak_sdk")
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+```
+
+## Documentation
 
 To see the list of clients provided in the SDK, use introspection:
 
@@ -80,8 +97,8 @@ help(Clients) # Help on the module
 help(Clients.get_clients) # Help on a particular function
 ```
 
-## TODO
-* Change print statements to use the python `Logging` module
+## TODO
+
 * Make storing key in the config file optional
 * Serialise body type parameters using `json.dumps` when these types of parameters are present
 * Compile the module help using `Sphinx`

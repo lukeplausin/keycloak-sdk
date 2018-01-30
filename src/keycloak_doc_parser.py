@@ -3,16 +3,25 @@ import requests
 import re
 from jinja2 import Template
 import json
+import os
 
 # This file will compile the keycloak online api documentation into a python sdk
 
-url = "http://www.keycloak.org/docs-api/3.4/rest-api/index.html#_overview"
-template_file = "./keycloak_sdk.py.j2"
+keycloak_version = "3.4"
+url = "http://www.keycloak.org/docs-api/{}/rest-api/index.html#_overview".format(keycloak_version)
+src_folder = os.path.dirname(os.path.realpath(__file__))
+template_file = os.path.join(src_folder, "keycloak_sdk.py.j2")
+wordlist_file = os.path.join(src_folder, "wordlist.json")
+output_file = os.path.join(
+    os.path.split(src_folder)[0],
+    "keycloak_sdk",
+    "__init__.py"
+)
 
 endpoint_pattern = "(PUT|POST|GET|DELETE|OPTIONS)\s(.*)"
 
 names = {}
-with open("./wordlist.json") as f:
+with open(wordlist_file) as f:
     names = json.load(f)
 
 
@@ -224,4 +233,4 @@ if __name__ == "__main__":
     endpoints = parse_url(url)
     for ep in names["additional"]:
         endpoints.append(ep)
-    build_module(endpoints, template_file, "./keycloak_sdk.py")
+    build_module(endpoints, template_file, output_file)

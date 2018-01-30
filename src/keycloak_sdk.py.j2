@@ -92,7 +92,7 @@ class KeycloakApiSession(object):
             auth=None
         )
         if response:
-            print("Logged into admin CLI")
+            logger.info("Logged into admin CLI")
             token = reformat_token(response, client_id)
             self.endpoints[serverUrl] = {self.realm: token}
 
@@ -100,15 +100,19 @@ class KeycloakApiSession(object):
         at_time = ((token["expiresAt"] / 1000) - time.time())
         rt_time = ((token["refreshExpiresAt"] / 1000) - time.time())
         if (at_time < 0):
-            print("Access token has expired {0:.2f}s ago".format(at_time))
+            logger.info(
+                "Access token has expired {0:.2f}s ago".format(at_time))
             if (rt_time < 0):
-                print("Refresh token expired {0:.2f}s ago".format(rt_time))
+                logger.info(
+                    "Refresh token expired {0:.2f}s ago".format(rt_time))
                 return False
             else:
-                print("Refresh token is valid ({0:.2f}s left)".format(rt_time))
+                logger.info(
+                    "Refresh token is valid ({0:.2f}s left)".format(rt_time))
                 return self.refresh_token(token)
         else:
-            print("Access token is still valid ({0:.2f}s left)".format(at_time))
+            logger.info(
+                "Access token is still valid ({0:.2f}s left)".format(at_time))
             return token
 
     def refresh_token(self, token):
@@ -125,7 +129,7 @@ class KeycloakApiSession(object):
             auth=None
         )
         if response:
-            print("Refreshed Token")
+            logger.info("Refreshed Token")
             token = reformat_token(response, client_id)
             self.endpoints[self.serverUrl] = {self.realm: token}
             if self.config_file_location:
@@ -182,7 +186,7 @@ class KeycloakApiSession(object):
             cookies=self.jar,
             params=params
         )
-        print("{method} {endpoint} {status}".format(
+        logger.info("{method} {endpoint} {status}".format(
             method=method,
             endpoint=endpoint,
             status=response.status_code
@@ -200,7 +204,7 @@ class KeycloakApiSession(object):
                 self.jar.update(response.cookies)
             return rval
         else:
-            print("Error {code} {message}".format(
+            logger.error("Error {code} {message}".format(
                 code=response.status_code,
                 message=response.reason
             ))

@@ -25,7 +25,7 @@ long_description = "An SDK for Keycloak written in Python."
 
 setup(
     name='keycloak-sdk',
-    version='0.9.0',
+    version='0.9.1',
     description="An SDK for Keycloak written in Python.",
     long_description=long_description,
 

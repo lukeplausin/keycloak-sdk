@@ -92,7 +92,7 @@ class KeycloakApiSession(object):
             auth=None
         )
         if response:
-            print("Logged into admin CLI")
+            logger.info("Logged into admin CLI")
             token = reformat_token(response, client_id)
             self.endpoints[serverUrl] = {self.realm: token}
 
@@ -100,15 +100,19 @@ class KeycloakApiSession(object):
         at_time = ((token["expiresAt"] / 1000) - time.time())
         rt_time = ((token["refreshExpiresAt"] / 1000) - time.time())
         if (at_time < 0):
-            print("Access token has expired {0:.2f}s ago".format(at_time))
+            logger.info(
+                "Access token has expired {0:.2f}s ago".format(at_time))
             if (rt_time < 0):
-                print("Refresh token expired {0:.2f}s ago".format(rt_time))
+                logger.info(
+                    "Refresh token expired {0:.2f}s ago".format(rt_time))
                 return False
             else:
-                print("Refresh token is valid ({0:.2f}s left)".format(rt_time))
+                logger.info(
+                    "Refresh token is valid ({0:.2f}s left)".format(rt_time))
                 return self.refresh_token(token)
         else:
-            print("Access token is still valid ({0:.2f}s left)".format(at_time))
+            logger.info(
+                "Access token is still valid ({0:.2f}s left)".format(at_time))
             return token
 
     def refresh_token(self, token):
@@ -125,7 +129,7 @@ class KeycloakApiSession(object):
             auth=None
         )
         if response:
-            print("Refreshed Token")
+            logger.info("Refreshed Token")
             token = reformat_token(response, client_id)
             self.endpoints[self.serverUrl] = {self.realm: token}
             if self.config_file_location:
@@ -182,7 +186,7 @@ class KeycloakApiSession(object):
             cookies=self.jar,
             params=params
         )
-        print("{method} {endpoint} {status}".format(
+        logger.info("{method} {endpoint} {status}".format(
             method=method,
             endpoint=endpoint,
             status=response.status_code
@@ -200,7 +204,7 @@ class KeycloakApiSession(object):
                 self.jar.update(response.cookies)
             return rval
         else:
-            print("Error {code} {message}".format(
+            logger.error("Error {code} {message}".format(
                 code=response.status_code,
                 message=response.reason
             ))
@@ -245,7 +249,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -276,7 +280,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -305,10 +309,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -332,10 +336,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -361,7 +365,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -390,10 +394,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -419,10 +423,10 @@ class Mappers(KeycloakApiClient):
             id=id, protocol=protocol, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -448,7 +452,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -479,7 +483,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -508,10 +512,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -535,10 +539,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -564,7 +568,7 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -593,10 +597,10 @@ class Mappers(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -622,10 +626,10 @@ class Mappers(KeycloakApiClient):
             id=id, protocol=protocol, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -657,10 +661,10 @@ class AttackDetection(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -684,10 +688,10 @@ class AttackDetection(KeycloakApiClient):
             realm=realm, userId=userId
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -711,10 +715,10 @@ class AttackDetection(KeycloakApiClient):
             realm=realm, userId=userId
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -741,13 +745,13 @@ class Root(KeycloakApiClient):
         """
 
         path = "/".format(
-
+            
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -764,13 +768,13 @@ class Root(KeycloakApiClient):
         """
 
         path = "/{any}".format(
-
+            
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="OPTIONS",
@@ -802,10 +806,10 @@ class Key(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -841,7 +845,7 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -870,10 +874,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -899,10 +903,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -930,7 +934,7 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -961,10 +965,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -992,7 +996,7 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1023,10 +1027,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1054,7 +1058,7 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1087,10 +1091,10 @@ class Roles(KeycloakApiClient):
             client=client, id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1116,10 +1120,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1145,10 +1149,10 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1176,7 +1180,7 @@ class Roles(KeycloakApiClient):
             id=id, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1214,7 +1218,7 @@ class Roles(KeycloakApiClient):
             "first": first, "max": max
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1238,7 +1242,7 @@ class Roles(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1265,10 +1269,10 @@ class Roles(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1292,10 +1296,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1321,7 +1325,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1350,10 +1354,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -1379,7 +1383,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1408,10 +1412,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1437,7 +1441,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1468,10 +1472,10 @@ class Roles(KeycloakApiClient):
             client=client, realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1495,10 +1499,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1522,10 +1526,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1551,7 +1555,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_name=role_name
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1587,7 +1591,7 @@ class Roles(KeycloakApiClient):
             "first": first, "max": max
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1611,10 +1615,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1640,7 +1644,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1669,10 +1673,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -1698,7 +1702,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1727,10 +1731,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1756,7 +1760,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1787,10 +1791,10 @@ class Roles(KeycloakApiClient):
             client=client, realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1814,10 +1818,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1841,10 +1845,10 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1870,7 +1874,7 @@ class Roles(KeycloakApiClient):
             realm=realm, role_id=role_id
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -1909,10 +1913,10 @@ class UserStorageProvider(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -1936,10 +1940,10 @@ class UserStorageProvider(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -1968,7 +1972,7 @@ class UserStorageProvider(KeycloakApiClient):
             "action": action
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -1992,10 +1996,10 @@ class UserStorageProvider(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -2026,7 +2030,7 @@ class UserStorageProvider(KeycloakApiClient):
             "direction": direction
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -2058,10 +2062,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2083,10 +2087,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2110,10 +2114,10 @@ class AuthManagement(KeycloakApiClient):
             providerId=providerId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2137,10 +2141,10 @@ class AuthManagement(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2166,7 +2170,7 @@ class AuthManagement(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2195,10 +2199,10 @@ class AuthManagement(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -2222,7 +2226,7 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2251,10 +2255,10 @@ class AuthManagement(KeycloakApiClient):
             executionId=executionId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -2280,7 +2284,7 @@ class AuthManagement(KeycloakApiClient):
             executionId=executionId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2309,10 +2313,10 @@ class AuthManagement(KeycloakApiClient):
             executionId=executionId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -2336,10 +2340,10 @@ class AuthManagement(KeycloakApiClient):
             executionId=executionId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -2363,7 +2367,7 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2390,10 +2394,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2419,7 +2423,7 @@ class AuthManagement(KeycloakApiClient):
             flowAlias=flowAlias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2448,10 +2452,10 @@ class AuthManagement(KeycloakApiClient):
             flowAlias=flowAlias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2477,7 +2481,7 @@ class AuthManagement(KeycloakApiClient):
             flowAlias=flowAlias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2508,7 +2512,7 @@ class AuthManagement(KeycloakApiClient):
             flowAlias=flowAlias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2539,7 +2543,7 @@ class AuthManagement(KeycloakApiClient):
             flowAlias=flowAlias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2568,10 +2572,10 @@ class AuthManagement(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2595,10 +2599,10 @@ class AuthManagement(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -2620,10 +2624,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2645,10 +2649,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2670,10 +2674,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2697,7 +2701,7 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2724,10 +2728,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2751,10 +2755,10 @@ class AuthManagement(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2780,7 +2784,7 @@ class AuthManagement(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2809,10 +2813,10 @@ class AuthManagement(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -2834,10 +2838,10 @@ class AuthManagement(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2873,10 +2877,10 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -2904,7 +2908,7 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2935,10 +2939,10 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -2966,7 +2970,7 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -2999,7 +3003,7 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "multipart/form-data"
@@ -3030,7 +3034,7 @@ class ClientAttributeCertificate(KeycloakApiClient):
             attr=attr, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "multipart/form-data"
@@ -3067,7 +3071,7 @@ class Clients(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3101,7 +3105,7 @@ class Clients(KeycloakApiClient):
             "clientId": clientId, "viewableOnly": viewableOnly
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3125,10 +3129,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3154,7 +3158,7 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3183,10 +3187,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -3210,7 +3214,7 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3237,10 +3241,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3266,10 +3270,10 @@ class Clients(KeycloakApiClient):
             id=id, providerId=providerId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3293,10 +3297,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3322,7 +3326,7 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3353,7 +3357,7 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3384,10 +3388,10 @@ class Clients(KeycloakApiClient):
             id=id, node=node, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -3411,10 +3415,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3445,7 +3449,7 @@ class Clients(KeycloakApiClient):
             "first": first, "max": max
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3469,10 +3473,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -3496,7 +3500,7 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3523,10 +3527,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3550,10 +3554,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3577,10 +3581,10 @@ class Clients(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3611,7 +3615,7 @@ class Clients(KeycloakApiClient):
             "first": first, "max": max
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3645,7 +3649,7 @@ class Component(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3681,7 +3685,7 @@ class Component(KeycloakApiClient):
             "name": name, "parent": parent, "type": type
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3705,10 +3709,10 @@ class Component(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3734,7 +3738,7 @@ class Component(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3763,10 +3767,10 @@ class Component(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -3795,7 +3799,7 @@ class Component(KeycloakApiClient):
             "type": type
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3829,7 +3833,7 @@ class ClientInitialAccess(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3856,10 +3860,10 @@ class ClientInitialAccess(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3883,10 +3887,10 @@ class ClientInitialAccess(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -3924,7 +3928,7 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -3955,10 +3959,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -3986,7 +3990,7 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4017,10 +4021,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4046,10 +4050,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4077,7 +4081,7 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4108,10 +4112,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4139,7 +4143,7 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4170,10 +4174,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4199,10 +4203,10 @@ class ClientRoleMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4236,10 +4240,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4265,7 +4269,7 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4294,10 +4298,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4323,7 +4327,7 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4352,10 +4356,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4379,10 +4383,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4406,10 +4410,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4435,7 +4439,7 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4464,10 +4468,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4493,7 +4497,7 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4522,10 +4526,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4549,10 +4553,10 @@ class RoleMapper(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4586,10 +4590,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4617,7 +4621,7 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4648,10 +4652,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4679,7 +4683,7 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4710,10 +4714,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4739,10 +4743,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4768,7 +4772,7 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4797,10 +4801,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4826,7 +4830,7 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4855,10 +4859,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4882,10 +4886,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4909,10 +4913,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -4940,7 +4944,7 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -4971,10 +4975,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5002,7 +5006,7 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5033,10 +5037,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5062,10 +5066,10 @@ class ScopeMappings(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5091,7 +5095,7 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5120,10 +5124,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5149,7 +5153,7 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5178,10 +5182,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5205,10 +5209,10 @@ class ScopeMappings(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5242,7 +5246,7 @@ class ClientTemplates(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5269,10 +5273,10 @@ class ClientTemplates(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5296,10 +5300,10 @@ class ClientTemplates(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5325,7 +5329,7 @@ class ClientTemplates(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5354,10 +5358,10 @@ class ClientTemplates(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -5391,7 +5395,7 @@ class Groups(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5427,7 +5431,7 @@ class Groups(KeycloakApiClient):
             "first": first, "max": max, "search": search
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5456,7 +5460,7 @@ class Groups(KeycloakApiClient):
             "search": search, "top": top
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5480,10 +5484,10 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5509,7 +5513,7 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5538,10 +5542,10 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -5567,7 +5571,7 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5596,10 +5600,10 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5625,7 +5629,7 @@ class Groups(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5661,7 +5665,7 @@ class Groups(KeycloakApiClient):
             "first": first, "max": max
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5695,7 +5699,7 @@ class Users(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5739,7 +5743,7 @@ class Users(KeycloakApiClient):
             "email": email, "first": first, "firstName": firstName, "lastName": lastName, "max": max, "search": search, "username": username
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5761,10 +5765,10 @@ class Users(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5788,10 +5792,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5817,7 +5821,7 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5846,10 +5850,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -5873,10 +5877,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -5902,10 +5906,10 @@ class Users(KeycloakApiClient):
             client=client, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -5931,7 +5935,7 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -5997,10 +6001,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6028,10 +6032,10 @@ class Users(KeycloakApiClient):
             id=id, provider=provider, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -6059,10 +6063,10 @@ class Users(KeycloakApiClient):
             id=id, provider=provider, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -6086,10 +6090,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6115,10 +6119,10 @@ class Users(KeycloakApiClient):
             groupId=groupId, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="PUT",
@@ -6144,10 +6148,10 @@ class Users(KeycloakApiClient):
             groupId=groupId, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -6171,10 +6175,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -6198,10 +6202,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -6227,10 +6231,10 @@ class Users(KeycloakApiClient):
             clientId=clientId, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6254,7 +6258,7 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6283,7 +6287,7 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6343,10 +6347,10 @@ class Users(KeycloakApiClient):
             id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6378,10 +6382,10 @@ class ClientRegistrationPolicy(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6415,7 +6419,7 @@ class IdentityProviders(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "multipart/form-data"
@@ -6442,7 +6446,7 @@ class IdentityProviders(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6469,10 +6473,10 @@ class IdentityProviders(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6496,10 +6500,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6525,7 +6529,7 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6554,10 +6558,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -6586,7 +6590,7 @@ class IdentityProviders(KeycloakApiClient):
             "format": format
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6610,10 +6614,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6639,7 +6643,7 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6668,10 +6672,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6697,7 +6701,7 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6726,10 +6730,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6755,10 +6759,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6786,7 +6790,7 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6817,10 +6821,10 @@ class IdentityProviders(KeycloakApiClient):
             alias=alias, id=id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -6844,10 +6848,10 @@ class IdentityProviders(KeycloakApiClient):
             provider_id=provider_id, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6876,10 +6880,10 @@ class Realms(KeycloakApiClient):
         """
 
         path = "/".format(
-
+            
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6906,10 +6910,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -6933,7 +6937,7 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -6960,10 +6964,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -7010,7 +7014,7 @@ class Realms(KeycloakApiClient):
             "authClient": authClient, "authIpAddress": authIpAddress, "authRealm": authRealm, "authUser": authUser, "dateFrom": dateFrom, "dateTo": dateTo, "first": first, "max": max, "operationTypes": operationTypes, "resourcePath": resourcePath, "resourceTypes": resourceTypes
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7032,10 +7036,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -7057,10 +7061,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7082,10 +7086,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7107,10 +7111,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7134,7 +7138,7 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -7161,10 +7165,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7186,10 +7190,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7213,10 +7217,10 @@ class Realms(KeycloakApiClient):
             groupId=groupId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="PUT",
@@ -7240,10 +7244,10 @@ class Realms(KeycloakApiClient):
             groupId=groupId, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -7284,7 +7288,7 @@ class Realms(KeycloakApiClient):
             "client": client, "dateFrom": dateFrom, "dateTo": dateTo, "first": first, "ipAddress": ipAddress, "max": max, "type": type, "user": user
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7306,10 +7310,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -7331,10 +7335,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7358,7 +7362,7 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -7387,10 +7391,10 @@ class Realms(KeycloakApiClient):
             path=path, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7412,10 +7416,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7444,7 +7448,7 @@ class Realms(KeycloakApiClient):
             "exportClients": exportClients, "exportGroupsAndRoles": exportGroupsAndRoles
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7468,7 +7472,7 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -7495,10 +7499,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7522,10 +7526,10 @@ class Realms(KeycloakApiClient):
             realm=realm, session=session
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="DELETE",
@@ -7564,7 +7568,7 @@ class Realms(KeycloakApiClient):
             "action": action, "bindCredential": bindCredential, "bindDn": bindDn, "componentId": componentId, "connectionTimeout": connectionTimeout, "connectionUrl": connectionUrl, "useTruststoreSpi": useTruststoreSpi
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7588,10 +7592,10 @@ class Realms(KeycloakApiClient):
             config=config, realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="POST",
@@ -7613,10 +7617,10 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
@@ -7640,7 +7644,7 @@ class Realms(KeycloakApiClient):
             realm=realm
         )
         params = {
-
+            
         }
         headers = {
             "Content-Type": "application/json"
@@ -7662,16 +7666,19 @@ class Realms(KeycloakApiClient):
         """
 
         path = "".format(
-
+            
         )
         params = {
-
+            
         }
         headers = {
-
+            
         }
         return self.session.request(
             method="GET",
             endpoint=self.session._admurl(path),
             params=params,
         )
+
+
+
