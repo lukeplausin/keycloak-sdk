@@ -13,6 +13,8 @@ pip install https://github.com/lukeplausin/keycloak-sdk.git
 
 ## Usage
 
+### Login
+
 Log into a keycloak server (with your username and password stored in the `KC_USERNAME` and `KC_PASSWORD` environment variables):
 
 ```
@@ -27,6 +29,17 @@ s.login(
     password=os.environ["KC_PASSWORD"]
 )
 ```
+
+Alternatively, you can point the module to a `.config` JSON file which is in the same format as the JAVA based SDK.
+
+```
+s = KeycloakApiSession()
+s.config_file_location = os.path.join(os.environ["HOME"], ".keycloak", "kcadm.config")
+```
+
+If you set the `config_file_location` then the `keycloak_sdk` module will store the login token there to save you entering your credentials between runs.
+
+### Client Examples
 
 List the security realms on the server:
 
@@ -99,10 +112,10 @@ help(Clients.get_clients) # Help on a particular function
 
 ## TODO
 
-* Make storing key in the config file optional
 * Serialise body type parameters using `json.dumps` when these types of parameters are present
 * Compile the module help using `Sphinx`
 * Parse different versions of the API docs other than 3.4
 * Perform type checking on inputs
 * Provide parameter defaults inside the module
 * Update the SDK compile script
+* Check possible issues of multiple methods in client with same name

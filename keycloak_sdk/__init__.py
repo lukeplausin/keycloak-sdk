@@ -9,6 +9,12 @@ import time
 
 
 logger = logging.getLogger(__name__)
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def offset_to_unix(seconds):
@@ -32,8 +38,8 @@ def reformat_token(response, client_id):
 
 class KeycloakApiSession(object):
     def __init__(self):
-        self.config_file_location = os.path.join(
-            os.environ["HOME"], ".keycloak", "kcadm.config")
+        # os.path.join(os.environ["HOME"], ".keycloak", "kcadm.config")
+        self.config_file_location = None
         self.realm = 'master'
         self.request_timeout_sec = 2
         self.endpoints = {}
@@ -60,23 +66,20 @@ class KeycloakApiSession(object):
             self.realm = data["realm"]
             self.serverUrl = data["serverUrl"]
             self.endpoints = data["endpoints"]
-        # for domain, realmdata in self.endpoints.items():
-        #     for realm, data in realmdata.items():
-        #         if "cookies" in data.keys():
-        #             cookies = data["cookies"]
-        #             for k, v in cookies.items():
-        #                 print("Setting cookie {}: {} (domain={})".format(
-        #                     k, v, domain))
-        #                 self.jar.set(k, v, domain=domain, path="/")
 
     def write_config_file(self, file_location):
-        with open(file_location, "w") as f:
-            data = {
-                "realm": self.realm,
-                "serverUrl": self.serverUrl,
-                "endpoints": self.endpoints
-            }
-            f.write(json.dumps(data))
+        if self.config_file_location:
+            if os.path.exists(os.path.dirname(file_location)):
+                with open(file_location, "w") as f:
+                    data = {
+                        "realm": self.realm,
+                        "serverUrl": self.serverUrl,
+                        "endpoints": self.endpoints
+                    }
+                    f.write(json.dumps(data))
+            else:
+                logger.error("Path {} does not exist".format(
+                    os.path.dirname(file_location)))
 
     def login_to_server(self, serverUrl, username, password):
         client_id = "admin-cli"
@@ -132,8 +135,7 @@ class KeycloakApiSession(object):
             logger.info("Refreshed Token")
             token = reformat_token(response, client_id)
             self.endpoints[self.serverUrl] = {self.realm: token}
-            if self.config_file_location:
-                self.write_config_file(self.config_file_location)
+            self.write_config_file(self.config_file_location)
             return token
         else:
             return False
