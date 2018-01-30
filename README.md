@@ -81,8 +81,6 @@ help(Clients.get_clients) # Help on a particular function
 ```
 
 ## TODO
-
-* Package as a proper pip module
 * Change print statements to use the python `Logging` module
 * Make storing key in the config file optional
 * Serialise body type parameters using `json.dumps` when these types of parameters are present
@@ -90,3 +88,4 @@ help(Clients.get_clients) # Help on a particular function
 * Parse different versions of the API docs other than 3.4
 * Perform type checking on inputs
 * Provide parameter defaults inside the module
+* Update the SDK compile script
