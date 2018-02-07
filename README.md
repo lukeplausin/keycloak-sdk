@@ -1,5 +1,5 @@
 # keycloak-sdk
-Unofficial SDK for the Keycloak application for Python. This python SDK is compiled from the HTML documentation for the Keycloak API. I found it more usable than the NodeJS SDK and the Java based CLI.
+Unofficial SDK for the Keycloak application for Python. This Python SDK is compiled from the HTML documentation for the Keycloak API. I found it more usable than the NodeJS SDK and the Java based CLI.
 
 [Keycloak API Reference](http://www.keycloak.org/docs-api/3.4/rest-api/index.html#_componentrepresentation)
 
@@ -77,7 +77,7 @@ response = s.request(
 
 ## Logging
 
-The SDK uses the python `logging` module as standard. To capture the output of the logs, you can redirect the output like this:
+The SDK uses the Python `logging` module as standard. To capture the output of the logs, you can redirect the output like this:
 
 ```
 import keycloak_sdk

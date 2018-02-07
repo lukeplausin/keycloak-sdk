@@ -39,7 +39,7 @@ def reformat_token(response, client_id):
 class KeycloakApiSession(object):
     def __init__(self):
         # os.path.join(os.environ["HOME"], ".keycloak", "kcadm.config")
-        self.config_file_location = None
+        self.config_file_location = ""
         self.realm = 'master'
         self.request_timeout_sec = 2
         self.endpoints = {}
